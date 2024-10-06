@@ -1,4 +1,45 @@
 import { Context } from 'koishi'
 import { Config } from '..'
+import path from 'path'
+import fs from 'fs/promises'
+import { readCharacterCard } from '../character-card'
+export function apply(ctx: Context, config: Config) {
+    const characterCardDir = path.join(ctx.baseDir, 'data/chathub/sillytavern')
 
-export function apply(ctx: Context, config: Config) {}
+    ctx.on('chatluna-character-card/load-all', async () => {
+        try {
+            const fileStat = await fs.stat(characterCardDir)
+            if (!fileStat.isDirectory()) {
+                // create the directory
+                await fs.mkdir(characterCardDir, { recursive: true })
+            }
+        } catch {
+            await fs.mkdir(characterCardDir, { recursive: true })
+        }
+
+        // load all character cards
+        const files = await fs
+            .readdir(characterCardDir)
+            .then((files) =>
+                files.filter(
+                    (file) => file.endsWith('.json') || file.endsWith('.png')
+                )
+            )
+
+        for (const file of files) {
+            const filePath = path.join(characterCardDir, file)
+
+            ctx.logger.info(`Loading character card: ${filePath}`)
+
+            const characterCard = await readCharacterCard(ctx, filePath)
+
+            console.log(characterCard)
+        }
+    })
+}
+
+declare module 'koishi' {
+    interface Events {
+        'chatluna-character-card/load-all': () => Promise<void>
+    }
+}
