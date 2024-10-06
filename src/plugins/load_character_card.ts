@@ -2,7 +2,7 @@ import { Context } from 'koishi'
 import { Config } from '..'
 import path from 'path'
 import fs from 'fs/promises'
-import { readCharacterCard } from '../character-card'
+import { readCharacterCard } from '../character_card'
 export function apply(ctx: Context, config: Config) {
     const characterCardDir = path.join(ctx.baseDir, 'data/chathub/sillytavern')
 
@@ -33,7 +33,10 @@ export function apply(ctx: Context, config: Config) {
 
             const characterCard = await readCharacterCard(ctx, filePath)
 
-            console.log(characterCard)
+            await ctx.parallel(
+                'chatluna-character-card/load-character-card',
+                characterCard
+            )
         }
     })
 }

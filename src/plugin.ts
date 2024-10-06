@@ -1,7 +1,8 @@
 import { Context } from 'koishi'
 import { Config } from '.'
 // import start
-import { apply as load } from './plugins/load'
+import { apply as convert_chatluna_preset } from './plugins/convert_chatluna_preset'
+import { apply as load_character_card } from './plugins/load_character_card'
 import { apply as watch } from './plugins/watch' // import end
 
 export async function plugins(ctx: Context, parent: Config) {
@@ -9,7 +10,7 @@ export async function plugins(ctx: Context, parent: Config) {
 
     const middlewares: Command[] =
         // middleware start
-        [load, watch] // middleware end
+        [convert_chatluna_preset, load_character_card, watch] // middleware end
 
     for (const middleware of middlewares) {
         await middleware(ctx, parent)

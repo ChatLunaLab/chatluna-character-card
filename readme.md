@@ -27,3 +27,4 @@ _让 ChatLuna 兼容加载 SillyTavern 的角色卡_
 
 - [ChatLuna](https://github.com/ChatLunaLab/chatluna)
 - [SillyTavern](https://github.com/SillyTavern/SillyTavern)
+- [RisuAI](https://github.com/kwaroran/RisuAI)

@@ -5,6 +5,8 @@ import path from 'path'
 import fs from 'fs/promises'
 import { v2CharData } from './types'
 
+// https://github.com/SillyTavern/SillyTavern/blob/ba6f7b7a98cf7a5eaf4f0e81da9779a9a668ced4/src/endpoints/characters.js
+
 function readRawCharacterDataFromPngBuffer(
     ctx: Context,
     buffer: Buffer,
