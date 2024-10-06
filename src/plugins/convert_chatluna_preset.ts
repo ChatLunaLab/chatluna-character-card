@@ -36,7 +36,7 @@ export function apply(ctx: Context, config: Config) {
 
             const presetFile = path.join(
                 chatlunaPresetDir,
-                `${presetTemplate.triggerKeyword[0]}.yaml`
+                `${presetTemplate.triggerKeyword[0]}.yml`
             )
 
             try {
