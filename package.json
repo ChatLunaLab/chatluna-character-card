@@ -45,9 +45,15 @@
   "homepage": "https://github.com/ChatLunaLab/chatluna-character-card#readme",
   "dependencies": {
     "@langchain/core": "^0.3.3",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "png-chunk-text": "^1.0.0",
+    "png-chunks-encode": "^1.0.0",
+    "png-chunks-extract": "^1.0.0"
   },
   "devDependencies": {
+    "@types/png-chunk-text": "^1",
+    "@types/png-chunks-encode": "^1",
+    "@types/png-chunks-extract": "^1",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^8.6.0",
     "atsc": "^1.2.2",
