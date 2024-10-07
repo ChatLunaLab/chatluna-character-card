@@ -1,7 +1,7 @@
 {
     "name": "koishi-plugin-chatluna-character-card",
     "description": "Compatible with SillyTavern character cards",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "main": "lib/index.cjs",
     "module": "lib/index.mjs",
