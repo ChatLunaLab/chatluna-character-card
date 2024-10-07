@@ -2,7 +2,7 @@
 
 # koishi-plugin-chatluna-character-card
 
-_让 ChatLuna 兼容加载 SillyTavern 的角色卡_
+_让 ChatLuna 兼容加载 SillyTavern 的角色卡。_
 
 ## [![npm](https://img.shields.io/npm/v/koishi-plugin-chatluna-character-card)](https://www.npmjs.com/package/koishi-plugin-chatluna-character-card) [![npm](https://img.shields.io/npm/dm/koishi-plugin-chatluna-character-card)](https://www.npmjs.com/package/koishi-plugin-chatluna-character-card) ![node version](https://img.shields.io/badge/node-%3E=18-green) ![github top language](https://img.shields.io/github/languages/top/ChatLunaLab/chatluna-character-card?logo=github)
 

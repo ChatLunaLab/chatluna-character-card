@@ -5,8 +5,10 @@ import fs from 'fs/promises'
 import yaml from 'js-yaml'
 import { v2CharData } from '../types'
 import {
+    AuthorsNote,
     PresetTemplate,
-    RawPreset
+    RawPreset,
+    RoleBook
 } from 'koishi-plugin-chatluna/llm-core/prompt'
 import { AIMessage, BaseMessage, SystemMessage } from '@langchain/core/messages'
 import { parseExampleMessage } from '../example_message'
@@ -27,7 +29,10 @@ export function apply(ctx: Context, config: Config) {
                     false
                 )
 
-                if (!existingPreset) {
+                if (
+                    !existingPreset ||
+                    existingPreset.version !== presetTemplate.version
+                ) {
                     await ctx.chatluna.preset.addPreset(presetTemplate)
                 }
 
@@ -122,8 +127,6 @@ function convertToChatlunaPreset(
         }
     }
 
-    // TODO: world lore, author's note
-
     // final format
     const formattedMessages = formatMessages(messages, {
         scenario: card.scenario,
@@ -136,8 +139,50 @@ function convertToChatlunaPreset(
         rawText: JSON.stringify(formattedMessages),
         triggerKeyword: [card.name],
         messages: formattedMessages,
+        loreBooks: {
+            items: getLoreBooks(card)
+        },
+        authorsNote: getAuthorsNote(card),
         config: {}
     } satisfies PresetTemplate
+}
+
+function getLoreBooks(card: v2CharData): RoleBook[] {
+    return card.character_book.entries.map((entry) => {
+        const keywords = entry.keys.concat(entry.secondary_keys).map((key) => {
+            // try regex
+            try {
+                return new RegExp(key)
+            } catch {
+                return key
+            }
+        })
+
+        return {
+            keywords,
+            enabled: entry.enabled,
+            content: entry.content,
+            order: entry.insertion_order,
+            scanDepth: entry.extensions?.depth || 1,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            insertPosition: entry.position as any,
+            matchWholeWord: entry.extensions?.match_whole_words || false,
+            recursiveScan: entry.extensions?.exclude_recursion || false,
+            maxRecursionDepth: 3
+        } satisfies RoleBook
+    })
+}
+
+function getAuthorsNote(card: v2CharData): AuthorsNote {
+    if (!card.creator_notes || card.creator_notes.length === 0) {
+        return undefined
+    }
+
+    return {
+        content: card.creator_notes,
+        insertDepth: 1,
+        insertFrequency: 1
+    } satisfies AuthorsNote
 }
 
 function formatMessages(
@@ -182,7 +227,29 @@ function presetToYAML(preset: PresetTemplate) {
                 | 'first_message'
                 | 'scenario'
         }))
-    } satisfies RawPreset
+    } as RawPreset
+
+    if (preset.authorsNote) {
+        rawPreset.authors_note = preset.authorsNote
+    }
+
+    if (preset.loreBooks) {
+        rawPreset.world_lores = preset.loreBooks.items.map(
+            (book) =>
+                ({
+                    keywords: book.keywords,
+                    content: book.content,
+                    insertPosition: book.insertPosition,
+                    scanDepth: book.scanDepth,
+                    recursiveScan: book.recursiveScan,
+                    maxRecursionDepth: book.maxRecursionDepth,
+                    matchWholeWord: book.matchWholeWord,
+                    caseSensitive: book.caseSensitive,
+                    enabled: book.enabled,
+                    order: book.order
+                }) satisfies RawPreset['world_lores'][0]
+        )
+    }
 
     return yaml.dump(rawPreset)
 }
