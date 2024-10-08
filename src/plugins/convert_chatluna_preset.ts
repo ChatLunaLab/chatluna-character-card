@@ -148,7 +148,12 @@ function convertToChatlunaPreset(
 }
 
 function getLoreBooks(card: v2CharData): RoleBook[] {
-    return card.character_book.entries.map((entry) => {
+    const entries = card?.character_book?.entries
+    if (!entries) {
+        return []
+    }
+
+    return entries.map((entry) => {
         const keywords = entry.keys.concat(entry.secondary_keys).map((key) => {
             // try regex
             try {
