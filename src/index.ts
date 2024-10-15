@@ -18,9 +18,6 @@ export const inject2 = {
     chatluna: {
         required: true
     },
-    cache: {
-        required: true
-    },
     chatluna_character: {
         required: false
     },
