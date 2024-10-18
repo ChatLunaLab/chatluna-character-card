@@ -17,7 +17,7 @@ _让 ChatLuna 兼容加载 SillyTavern 的角色卡。_
 
 在 Koishi 插件市场搜索 `chatluna-character-card`，安装后启用即可。
 
-角色卡放入 `data/chatluna/sillytavern` 目录下，角色卡文件格式为 `json` 或 `png`。
+角色卡放入 `data/chathub/sillytavern` 目录下，角色卡文件格式为 `json` 或 `png`。
 
 **注意我们不能也没办法完全兼容所有 SillyTavern 的角色卡。**
 

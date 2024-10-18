@@ -77,7 +77,7 @@ export const Config = Schema.intersect([
 ]) as unknown as Schema<Config>
 
 export const usage = `
-角色卡放入 \`data/chatluna/sillytavern\` 目录下，角色卡文件格式为 \`json\` 或 \`png\`。
+角色卡放入 \`data/chathub/sillytavern\` 目录下，角色卡文件格式为 \`json\` 或 \`png\`。
 
 
 使用内存加载模式时，角色卡会直接加载到内存中，你可以实时在 ChatLuna 中使用这些角色卡。
