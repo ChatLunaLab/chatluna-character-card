@@ -83,6 +83,8 @@ export const usage = `
 使用内存加载模式时，角色卡会直接加载到内存中，你可以实时在 ChatLuna 中使用这些角色卡。
 
 使用文件加载模式时，角色卡会转换为 ChatLuna 的预设文件，你需要在转换完成后重启 ChatLuna 才能使用这些角色卡。
+
+更多参考：[ChatLuna 文档](https://chatluna.chat/ecosystem/extension/character-card.html)
 `
 
 export const name = 'chatluna-character-card'

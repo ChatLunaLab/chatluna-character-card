@@ -23,6 +23,10 @@ _让 ChatLuna 兼容加载 SillyTavern 的角色卡。_
 
 **插件依赖 ChatLuna，请确保在 ChatLuna 启动后再启用本插件。**
 
+## 配置
+
+更多参考：[ChatLuna 文档](https://chatluna.chat/ecosystem/extension/character-card.html)
+
 ## 感谢
 
 - [ChatLuna](https://github.com/ChatLunaLab/chatluna)
