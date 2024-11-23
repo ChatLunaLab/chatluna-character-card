@@ -8,6 +8,7 @@ export interface v2DataWorldInfoEntry {
     insertion_order: number
     enabled: boolean
     position: string
+    use_regex: boolean
     extensions: v2DataWorldInfoEntryExtensionInfos
     id: number
 }

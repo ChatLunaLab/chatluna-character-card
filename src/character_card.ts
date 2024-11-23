@@ -134,10 +134,24 @@ function readCharacterCardFromV2(
         if (v2Value === undefined) {
             let defaultValue: unknown
 
+            // Add default values for specific fields
+            switch (v2Path) {
+                case 'extensions.talkativeness':
+                    defaultValue = 0.5
+                    break
+                case 'extensions.fav':
+                    defaultValue = false
+                    break
+            }
+
             if (defaultValue !== undefined) {
+                ctx.logger.debug(
+                    `Spec v2 extension data missing for field: ${charField}, using default value: ${defaultValue}`
+                )
                 jsonObject[charField] = defaultValue
+                continue
             } else {
-                console.debug(
+                ctx.logger.debug(
                     `Character ${jsonObject.name} has missing Spec v2 data for unknown field: ${charField}`
                 )
                 continue
