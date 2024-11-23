@@ -18,9 +18,7 @@ export function apply(ctx: Context, config: Config) {
     ctx.on(
         'chatluna-character-card/load-character-card',
         async (card: v2CharData) => {
-            const presetTemplate = convertToChatlunaPreset(card, config)
-
-            // console.log(JSON.stringify(presetTemplate, null, 2))
+            const presetTemplate = convertToChatLunaPreset(card['data'], config)
 
             if (config.loadMode === 'memory') {
                 const existingPreset = await ctx.chatluna.preset.getPreset(
@@ -56,7 +54,7 @@ export function apply(ctx: Context, config: Config) {
     )
 }
 
-function convertToChatlunaPreset(
+function convertToChatLunaPreset(
     card: v2CharData,
     config: Config
 ): PresetTemplate {
@@ -148,34 +146,46 @@ function convertToChatlunaPreset(
 }
 
 function getLoreBooks(card: v2CharData): RoleBook[] {
-    const entries = card?.character_book?.entries
+    const entries = card.character_book?.entries
+
     if (!entries) {
         return []
     }
 
-    return entries.map((entry) => {
-        const keywords = entry.keys.concat(entry.secondary_keys).map((key) => {
-            // try regex
-            try {
-                return new RegExp(key)
-            } catch {
-                return key
-            }
-        })
+    return entries
+        .map((entry) => {
+            const keywords = entry.keys.concat(entry.secondary_keys)
 
-        return {
-            keywords,
-            enabled: entry.enabled,
-            content: entry.content,
-            order: entry.insertion_order,
-            scanDepth: entry.extensions?.depth || 1,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            insertPosition: entry.position as any,
-            matchWholeWord: entry.extensions?.match_whole_words || false,
-            recursiveScan: entry.extensions?.exclude_recursion || false,
-            maxRecursionDepth: 3
-        } satisfies RoleBook
-    })
+            if (keywords.length === 0) {
+                keywords.push(entry.comment)
+            }
+
+            if (entry.content.length < 1) {
+                return undefined
+            }
+
+            let insertPosition = entry.position
+
+            if (insertPosition === 'before_char') {
+                insertPosition = 'before_char_defs'
+            } else if (insertPosition === 'after_char') {
+                insertPosition = 'after_char_defs'
+            }
+
+            return {
+                keywords,
+                enabled: entry.enabled,
+                content: entry.content,
+                order: entry.insertion_order,
+                scanDepth: entry.extensions?.depth || 1,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                insertPosition: insertPosition as any,
+                matchWholeWord: entry.extensions?.match_whole_words || false,
+                recursiveScan: entry.extensions?.exclude_recursion || false,
+                maxRecursionDepth: 3
+            } satisfies RoleBook
+        })
+        .filter((book) => book != null)
 }
 
 function getAuthorsNote(card: v2CharData): AuthorsNote {
