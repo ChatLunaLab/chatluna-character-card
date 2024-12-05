@@ -98,13 +98,15 @@ function convertToChatLunaPreset(
         )
     }
 
-    // first format
-    formatMessages(messages, {
+    const variables: Record<string, string> = {
         scenario: card.scenario,
         personality: card.personality,
         description: card.description,
         char: card.name
-    })
+    }
+
+    // first format
+    formatMessages(messages, variables)
 
     const hasStartMessage = messages.some(
         (message) => message.additional_kwargs.type === 'start_chat'
@@ -126,26 +128,24 @@ function convertToChatLunaPreset(
     }
 
     // final format
-    const formattedMessages = formatMessages(messages, {
-        scenario: card.scenario,
-        personality: card.personality,
-        description: card.description,
-        char: card.name
-    })
+    const formattedMessages = formatMessages(messages, variables)
 
     return {
         rawText: JSON.stringify(formattedMessages),
         triggerKeyword: [card.name],
         messages: formattedMessages,
         loreBooks: {
-            items: getLoreBooks(card)
+            items: getLoreBooks(card, variables)
         },
-        authorsNote: getAuthorsNote(card),
+        authorsNote: getAuthorsNote(card, variables),
         config: {}
     } satisfies PresetTemplate
 }
 
-function getLoreBooks(card: v2CharData): RoleBook[] {
+function getLoreBooks(
+    card: v2CharData,
+    variables: Record<string, string>
+): RoleBook[] {
     const entries = card.character_book?.entries
 
     if (!entries) {
@@ -175,7 +175,7 @@ function getLoreBooks(card: v2CharData): RoleBook[] {
             return {
                 keywords,
                 enabled: entry.enabled,
-                content: entry.content,
+                content: formatMessage(entry.content, variables),
                 order: entry.insertion_order,
                 scanDepth: entry.extensions?.depth || 1,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,33 +188,47 @@ function getLoreBooks(card: v2CharData): RoleBook[] {
         .filter((book) => book != null)
 }
 
-function getAuthorsNote(card: v2CharData): AuthorsNote {
+function getAuthorsNote(
+    card: v2CharData,
+    variables: Record<string, string>
+): AuthorsNote {
     if (!card.creator_notes || card.creator_notes.length === 0) {
         return undefined
     }
 
     return {
-        content: card.creator_notes,
+        content: formatMessage(
+            card.creator_notes,
+            Object.assign({}, variables)
+        ),
         insertDepth: 1,
         insertFrequency: 1
     } satisfies AuthorsNote
+}
+
+function formatMessage(
+    content: string,
+    variables: Record<string, string>
+): string {
+    const regex = /\{\{(.*?)\}\}/g
+
+    // replace {{xx}} => {xx}
+    content = content.replaceAll(regex, (_, p1) => {
+        return variables[p1] || `{${p1}}`
+    })
+
+    return content
 }
 
 function formatMessages(
     messages: BaseMessage[],
     variables: Record<string, string>
 ) {
-    const regex = /\{\{(.*?)\}\}/g
-
     for (let i = 0; i < messages.length; i++) {
-        let content = messages[i].content as string
-
-        // replace {{xx}} => {xx}
-        content = content.replaceAll(regex, (_, p1) => {
-            return variables[p1] || `{${p1}}`
-        })
-
-        messages[i].content = content
+        messages[i].content = formatMessage(
+            messages[i].content as string,
+            variables
+        )
     }
 
     return messages
@@ -234,7 +248,7 @@ function presetToYAML(preset: PresetTemplate) {
                 } else {
                     throw new Error(`Unknown role: ${role}`)
                 }
-            })(message._getType()),
+            })(message.getType()),
             content: message.content as string,
             type: message.additional_kwargs.type as
                 | 'personality'
