@@ -174,6 +174,7 @@ function getLoreBooks(
 
             return {
                 keywords,
+                constant: entry.constant || false,
                 enabled: entry.enabled,
                 content: formatMessage(entry.content, variables),
                 order: entry.insertion_order,
@@ -275,6 +276,7 @@ function presetToYAML(preset: PresetTemplate) {
                     matchWholeWord: book.matchWholeWord,
                     caseSensitive: book.caseSensitive,
                     enabled: book.enabled,
+                    constant: book.constant,
                     order: book.order
                 }) satisfies RawPreset['world_lores'][0]
         )
