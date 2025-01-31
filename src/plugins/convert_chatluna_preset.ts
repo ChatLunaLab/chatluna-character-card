@@ -137,6 +137,7 @@ function convertToChatLunaPreset(
         loreBooks: {
             items: getLoreBooks(card, variables)
         },
+        formatUserPromptString: '{sender}: {prompt}',
         authorsNote: getAuthorsNote(card, variables),
         config: {}
     } satisfies PresetTemplate
