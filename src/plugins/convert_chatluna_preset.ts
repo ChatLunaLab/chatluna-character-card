@@ -158,7 +158,7 @@ function getLoreBooks(
             const keywords = entry.keys.concat(entry.secondary_keys)
 
             if (keywords.length === 0) {
-                keywords.push(entry.comment)
+                keywords.push('') // entry.comment)
             }
 
             if (entry.content.length < 1) {
@@ -175,7 +175,9 @@ function getLoreBooks(
 
             return {
                 keywords,
-                constant: entry.constant || false,
+                constant:
+                    entry.constant ||
+                    (keywords.length === 1 && keywords[0] === ''),
                 enabled: entry.enabled,
                 content: formatMessage(entry.content, variables),
                 order: entry.insertion_order,
