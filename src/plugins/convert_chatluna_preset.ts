@@ -21,11 +21,10 @@ export function apply(ctx: Context, config: Config) {
             const presetTemplate = convertToChatLunaPreset(card['data'], config)
 
             if (config.loadMode === 'memory') {
-                const existingPreset = await ctx.chatluna.preset.getPreset(
+                const existingPreset = ctx.chatluna.preset.getPreset(
                     presetTemplate.triggerKeyword[0],
-                    false,
                     false
-                )
+                ).value
 
                 if (
                     !existingPreset ||
